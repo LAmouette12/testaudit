@@ -916,49 +916,33 @@ document.getElementById('form').addEventListener('submit', e => {
     const email   = document.querySelector('input[name="email"]').value.trim();
     const company = document.querySelector('input[name="company"]').value.trim();
     const role    = document.querySelector('input[name="role"]').value.trim();
+    const current_method = document.querySelector('textarea[name="current_method"]').value.trim();
 
-    // Labels for each multiple-choice question
-    const labels = {
-      emails:     { q:'Email archive size',    vals:{ 'lt5k':'< 5,000 emails','5k25k':'5,000 – 25,000 emails','25k100k':'25,000 – 100,000 emails','gt100k':'> 100,000 emails' } },
-      activities: { q:'Schedule activities',   vals:{ 'lt500':'< 500 activities','500to5k':'500 – 5,000 activities','5kto20k':'5,000 – 20,000 activities','gt20k':'> 20,000 activities' } },
-      volume:     { q:'Cases per year',        vals:{ 'lt3':'1 – 2 cases','3to10':'3 – 10 cases','10to30':'10 – 30 cases','gt30':'> 30 cases' } },
-      deadline:   { q:'Scheduling format',     vals:{ 'p6':'Primavera P6 (.xer)','msp':'Microsoft Project (.mpp)','both':'Both P6 & MSP','none':'No structured schedule / Excel-based' } }
-    };
+    // Get radio answers
+    const getValue = (g) => { const el = document.querySelector(`input[name="${g}"]:checked`); return el ? el.value : ''; };
 
-    // Build readable summary
-    const answers = groups.map(g => {
-      const checked = document.querySelector(`input[name="${g}"]:checked`);
-      const val = checked ? (labels[g].vals[checked.value] || checked.value) : '—';
-      return `${labels[g].q}: ${val}`;
-    }).join('\n');
-
-    const body = `New Kalypso audit form submission\n\n` +
-                 `Name:    ${name}\n` +
-                 `Email:   ${email}\n` +
-                 `Company: ${company || '—'}\n` +
-                 `Role:    ${role || '—'}\n\n` +
-                 `--- Audit responses ---\n${answers}`;
-
-    // Send via Web3Forms — remplace YOUR_ACCESS_KEY par ta clé (web3forms.com, gratuit, 30 sec)
+    // POST to Web3Forms
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        access_key: 'YOUR_ACCESS_KEY',
+        access_key: '6cfed2af-66be-4360-a23f-e9855ff5869d',
         subject: 'Kalypso audit — ' + name + ' (' + (company || email) + ')',
         from_name: 'Kalypso Audit Form',
-        to: 'contact@kalypsohq.com',
-        name, email, company, role, answers,
-        message: 'New audit submission\n\nName: ' + name + '\nEmail: ' + email + '\nCompany: ' + (company||'—') + '\nRole: ' + (role||'—') + '\n\n' + answers
+        name, email, company, role, current_method,
+        emails: getValue('emails'),
+        activities: getValue('activities'),
+        volume: getValue('volume'),
+        deadline: getValue('deadline')
       })
     }).catch(function(){});
 
-    // Show success screen
+    // Show success screen immediately (don't wait for email)
     document.getElementById('success').classList.add('show');
     document.querySelector('main').style.display = 'none';
     document.querySelector('.hero-header').style.display = 'none';
 
-    // Init Cal.com inline embed — remplace kalypsohq/audit par ton vrai slug Cal.com
+    // Cal.com inline embed
     (function(C,A,L){
       var p=function(a,ar){a.q.push(ar);};
       var d=C.document;
