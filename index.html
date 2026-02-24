@@ -614,11 +614,12 @@ footer {
 
 .succ-cal-wrap {
   width: 100%;
-  background: var(--cream-card);
+  background: #fff;
   border: 1px solid var(--border-card);
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 4px 32px rgba(120,50,10,0.08), 0 1px 4px rgba(120,50,10,0.04);
+  min-height: 700px;
 }
 
 @media (max-width: 560px) {
@@ -639,8 +640,7 @@ footer {
   .card-intro { flex-direction: column; }
 }
 </style>
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
 </head>
 <body>
 
@@ -863,7 +863,7 @@ footer {
       <div class="succ-divider-line"></div>
     </div>
     <div class="succ-cal-wrap">
-      <div id="calendly-embed" style="min-width:320px;height:660px;"></div>
+      <div id="cal-embed"></div>
     </div>
   </div>
 </div>
@@ -910,16 +910,76 @@ document.getElementById('form').addEventListener('submit', e => {
   else document.getElementById('f-email').classList.remove('err-f');
 
   if (!ok && firstErr) { firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
   if (ok) {
+    const name    = document.querySelector('input[name="name"]').value.trim();
+    const email   = document.querySelector('input[name="email"]').value.trim();
+    const company = document.querySelector('input[name="company"]').value.trim();
+    const role    = document.querySelector('input[name="role"]').value.trim();
+
+    // Labels for each multiple-choice question
+    const labels = {
+      emails:     { q:'Email archive size',    vals:{ 'lt5k':'< 5,000 emails','5k25k':'5,000 – 25,000 emails','25k100k':'25,000 – 100,000 emails','gt100k':'> 100,000 emails' } },
+      activities: { q:'Schedule activities',   vals:{ 'lt500':'< 500 activities','500to5k':'500 – 5,000 activities','5kto20k':'5,000 – 20,000 activities','gt20k':'> 20,000 activities' } },
+      volume:     { q:'Cases per year',        vals:{ 'lt3':'1 – 2 cases','3to10':'3 – 10 cases','10to30':'10 – 30 cases','gt30':'> 30 cases' } },
+      deadline:   { q:'Scheduling format',     vals:{ 'p6':'Primavera P6 (.xer)','msp':'Microsoft Project (.mpp)','both':'Both P6 & MSP','none':'No structured schedule / Excel-based' } }
+    };
+
+    // Build readable summary
+    const answers = groups.map(g => {
+      const checked = document.querySelector(`input[name="${g}"]:checked`);
+      const val = checked ? (labels[g].vals[checked.value] || checked.value) : '—';
+      return `${labels[g].q}: ${val}`;
+    }).join('\n');
+
+    const body = `New Kalypso audit form submission\n\n` +
+                 `Name:    ${name}\n` +
+                 `Email:   ${email}\n` +
+                 `Company: ${company || '—'}\n` +
+                 `Role:    ${role || '—'}\n\n` +
+                 `--- Audit responses ---\n${answers}`;
+
+    // Send via Web3Forms — remplace YOUR_ACCESS_KEY par ta clé (web3forms.com, gratuit, 30 sec)
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: 'YOUR_ACCESS_KEY',
+        subject: 'Kalypso audit — ' + name + ' (' + (company || email) + ')',
+        from_name: 'Kalypso Audit Form',
+        to: 'contact@kalypsohq.com',
+        name, email, company, role, answers,
+        message: 'New audit submission\n\nName: ' + name + '\nEmail: ' + email + '\nCompany: ' + (company||'—') + '\nRole: ' + (role||'—') + '\n\n' + answers
+      })
+    }).catch(function(){});
+
+    // Show success screen
     document.getElementById('success').classList.add('show');
     document.querySelector('main').style.display = 'none';
     document.querySelector('.hero-header').style.display = 'none';
-    const name = document.querySelector('input[name="name"]').value.trim();
-    const email = document.querySelector('input[name="email"]').value.trim();
-    Calendly.initInlineWidget({
-      url: 'https://calendly.com/kalypsohq/audit?hide_gdpr_banner=1&background_color=FAF4EC&text_color=1C0E06&primary_color=C45A1A',
-      parentElement: document.getElementById('calendly-embed'),
-      prefill: { name: name, email: email }
+
+    // Init Cal.com inline embed — remplace kalypsohq/audit par ton vrai slug Cal.com
+    (function(C,A,L){
+      var p=function(a,ar){a.q.push(ar);};
+      var d=C.document;
+      C.Cal=C.Cal||function(){
+        var cal=C.Cal;var ar=arguments;
+        if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement('script')).src=A;cal.loaded=true;}
+        if(ar[0]===L){var api=function(){p(api,arguments);};var ns=ar[1];api.q=api.q||[];
+        typeof ns==='string'?(cal.ns[ns]=api)&&p(api,ar):p(cal,ar);return;}p(cal,ar);
+      };
+    })(window,'https://app.cal.com/embed/embed.js','init');
+
+    Cal('init', { origin: 'https://cal.com' });
+    Cal('inline', {
+      elementOrSelector: '#cal-embed',
+      calLink: 'kalypsohq/audit',
+      config: { layout: 'month_view', name: name, email: email }
+    });
+    Cal('ui', {
+      styles: { branding: { brandColor: '#C45A1A' } },
+      hideEventTypeDetails: false,
+      layout: 'month_view'
     });
   }
 });
