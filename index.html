@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
   /* ── Kalypso palette (from screenshot) ── */
   --terra-deep:   #7A2E08;   /* dark burnt orange top */
@@ -24,9 +23,7 @@
   --border-card:  rgba(180, 100, 50, 0.25);
   --error:        #C0320A;
 }
-
 html { scroll-behavior: smooth; }
-
 body {
   font-family: 'Inter', sans-serif;
   background: var(--cream);
@@ -34,8 +31,6 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
-
-
 /* GRAIN OVERLAY */
 body::before {
   content: '';
@@ -46,7 +41,6 @@ body::before {
   z-index: 0;
   opacity: 0.35;
 }
-
 /* ── HERO HEADER ── */
 .hero-header {
   background: linear-gradient(
@@ -60,7 +54,6 @@ body::before {
   position: relative;
   overflow: hidden;
 }
-
 /* subtle noise / grain overlay */
 .hero-header::before {
   content: '';
@@ -71,7 +64,6 @@ body::before {
   pointer-events: none;
   opacity: 0.4;
 }
-
 /* NAV */
 nav {
   display: flex;
@@ -81,32 +73,27 @@ nav {
   position: relative;
   z-index: 2;
 }
-
 .nav-logo {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-
 /* CK Monogram - matches site */
 .ck-mark {
   width: 32px;
   height: 32px;
   position: relative;
 }
-
 .ck-mark svg {
   width: 32px;
   height: 32px;
 }
-
 .nav-wordmark {
   font-size: 15px;
   font-weight: 500;
   color: var(--white);
   letter-spacing: 0.06em;
 }
-
 .nav-tag {
   font-size: 11px;
   font-weight: 400;
@@ -116,7 +103,6 @@ nav {
   padding: 4px 12px;
   border-radius: 100px;
 }
-
 /* HERO CONTENT */
 .hero-body {
   position: relative;
@@ -126,8 +112,6 @@ nav {
   max-width: 680px;
   margin: 0 auto;
 }
-
-
 .hero-eyebrow {
   font-size: 11px;
   font-weight: 400;
@@ -136,7 +120,6 @@ nav {
   color: rgba(255,255,255,0.6);
   margin-bottom: 18px;
 }
-
 .hero-body h1 {
   font-size: clamp(30px, 5vw, 48px);
   font-weight: 300;
@@ -145,13 +128,11 @@ nav {
   color: var(--white);
   margin-bottom: 16px;
 }
-
 .hero-body h1 em {
   font-style: italic;
   font-weight: 300;
   color: rgba(255,255,255,0.65);
 }
-
 .hero-body p {
   font-size: 15px;
   font-weight: 300;
@@ -160,7 +141,6 @@ nav {
   max-width: 480px;
   margin: 0 auto;
 }
-
 /* ── MAIN FORM AREA ── */
 main {
   max-width: 660px;
@@ -169,8 +149,6 @@ main {
   position: relative;
   z-index: 3;
 }
-
-
 .q-meta {
   display: flex;
   align-items: center;
@@ -190,8 +168,6 @@ main {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-
-
 /* ── CARD INTRO + PROGRESS ── */
 .card-intro {
   background: var(--white);
@@ -234,7 +210,7 @@ main {
   background: linear-gradient(90deg, var(--terra-mid), var(--terra-warm));
   border-radius: 2px;
   width: 0%;
-  transition: width 0.35s ease;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
 }
 .progress-text {
   font-size: 11px;
@@ -242,7 +218,6 @@ main {
   color: var(--ink-muted);
   white-space: nowrap;
 }
-
 /* ── QUESTION BLOCKS ── */
 .q-block {
   background: var(--cream-card);
@@ -250,26 +225,66 @@ main {
   border-radius: 10px;
   padding: 28px 28px 24px;
   margin-bottom: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.35s, box-shadow 0.35s, opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1), max-height 0.6s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 1px 6px rgba(120,50,10,0.05);
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Progressive reveal: hidden state */
+.q-block.q-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-color: transparent;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* Progressive reveal: visible state */
+.q-block.q-visible {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 800px;
+  animation: slideReveal 0.55s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes slideReveal {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+/* Completed question state */
+.q-block.q-done {
+  border-color: rgba(120,160,80,0.35);
+  box-shadow: 0 1px 8px rgba(120,160,80,0.08);
+  position: relative;
+}
+.q-block.q-done::after {
+  content: '✓';
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 14px;
+  color: rgba(90,140,60,0.7);
+  font-weight: 600;
+  animation: checkPop 0.35s cubic-bezier(.4,0,.2,1);
+}
+@keyframes checkPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+/* Initial load animation for first visible block */
+.q-block.q-first-reveal {
+  animation: rise 0.45s ease forwards;
   opacity: 0;
   transform: translateY(12px);
-  animation: rise 0.45s ease forwards;
-  box-shadow: 0 1px 6px rgba(120,50,10,0.05);
 }
-
-.q-block:nth-child(1){animation-delay:.08s}
-.q-block:nth-child(2){animation-delay:.16s}
-.q-block:nth-child(3){animation-delay:.24s}
-.q-block:nth-child(4){animation-delay:.32s}
-.q-block:nth-child(5){animation-delay:.40s}
-
 @keyframes rise { to { opacity:1; transform:translateY(0); } }
-
 .q-block.err {
   border-color: var(--error);
   box-shadow: 0 0 0 3px rgba(192, 50, 10, 0.08);
 }
-
 .q-title {
   font-size: 16px;
   font-weight: 500;
@@ -278,7 +293,6 @@ main {
   line-height: 1.4;
   margin-bottom: 5px;
 }
-
 .q-hint {
   font-size: 12px;
   font-weight: 300;
@@ -286,7 +300,6 @@ main {
   margin-bottom: 16px;
   line-height: 1.6;
 }
-
 .q-err-msg {
   font-size: 11px;
   color: var(--error);
@@ -294,12 +307,9 @@ main {
   font-weight: 400;
   display: none;
 }
-
 .q-block.err .q-err-msg { display: block; }
-
 /* ── OPTIONS ── */
 .opts { display: flex; flex-direction: column; gap: 6px; }
-
 .opt {
   display: flex;
   align-items: flex-start;
@@ -309,51 +319,62 @@ main {
   border-radius: 7px;
   background: var(--white);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   user-select: none;
 }
-
 .opt:hover {
   border-color: rgba(180, 100, 50, 0.45);
   background: rgba(255, 248, 240, 1);
+  transform: translateX(2px);
 }
-
+.opt:active {
+  transform: scale(0.985);
+}
 .opt.on {
   border-color: var(--terra-mid);
   background: rgba(250, 240, 228, 1);
   box-shadow: 0 0 0 3px rgba(196, 90, 26, 0.10);
+  animation: optSelect 0.3s cubic-bezier(.4,0,.2,1);
 }
-
+@keyframes optSelect {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
 .opt input[type="radio"] {
   position: absolute; opacity: 0; width: 0; height: 0;
 }
-
 .radio-ring {
   width: 16px; height: 16px;
   border: 1.5px solid rgba(180, 100, 50, 0.35);
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 2px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s;
   background: var(--white);
 }
-
 .opt.on .radio-ring {
   border-color: var(--terra-mid);
   background: var(--terra-mid);
+  box-shadow: 0 0 0 3px rgba(196, 90, 26, 0.15);
+  animation: ringPulse 0.35s cubic-bezier(.4,0,.2,1);
 }
-
+@keyframes ringPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(196,90,26,0.3); }
+  50% { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(196,90,26,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 3px rgba(196,90,26,0.15); }
+}
 .radio-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--white);
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.2s cubic-bezier(.4,0,.2,1);
+  transform: scale(0);
 }
-
-.opt.on .radio-dot { opacity: 1; }
-
+.opt.on .radio-dot { opacity: 1; transform: scale(1); }
 .opt-label strong {
   display: block;
   font-size: 13px;
@@ -361,14 +382,12 @@ main {
   color: var(--ink);
   margin-bottom: 1px;
 }
-
 .opt-label span {
   font-size: 12px;
   font-weight: 300;
   color: var(--ink-muted);
   line-height: 1.4;
 }
-
 /* ── CONTACT SECTION ── */
 .contact-section {
   background: var(--cream-card);
@@ -378,8 +397,21 @@ main {
   margin-bottom: 14px;
   margin-top: 8px;
   box-shadow: 0 1px 6px rgba(120,50,10,0.05);
+  transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1), max-height 0.6s cubic-bezier(.4,0,.2,1);
 }
-
+.contact-section.q-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  border-color: transparent;
+  overflow: hidden;
+  pointer-events: none;
+}
+.contact-section.q-visible {
+  animation: slideReveal 0.55s cubic-bezier(.4,0,.2,1) forwards;
+}
 .section-title {
   font-size: 13px;
   font-weight: 600;
@@ -390,23 +422,19 @@ main {
   align-items: center;
   gap: 10px;
 }
-
 .section-title::after {
   content: '';
   flex: 1;
   height: 1px;
   background: var(--border-warm);
 }
-
 .fields-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field.full { grid-column: 1 / -1; }
-
 .field-label {
   font-size: 11px;
   font-weight: 500;
@@ -414,9 +442,7 @@ main {
   text-transform: uppercase;
   color: var(--ink-muted);
 }
-
 .field-label small { font-weight: 300; opacity: 0.7; text-transform: none; letter-spacing: 0; }
-
 input[type="text"],
 input[type="email"],
 textarea {
@@ -434,38 +460,43 @@ textarea {
   resize: none;
   -webkit-appearance: none;
 }
-
 input:focus, textarea:focus {
   border-color: var(--terra-mid);
   box-shadow: 0 0 0 3px rgba(196, 90, 26, 0.10);
 }
-
 input::placeholder, textarea::placeholder { color: var(--sand-light); }
-
 .field.err-f input,
 .field.err-f textarea {
   border-color: var(--error);
   box-shadow: 0 0 0 3px rgba(192, 50, 10, 0.08);
 }
-
 /* ── SUBMIT ── */
+.submit-area.q-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  max-height: 0;
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+}
+.submit-area.q-visible {
+  animation: slideReveal 0.55s cubic-bezier(.4,0,.2,1) forwards;
+}
 .submit-area {
   display: flex;
+  transition: opacity 0.5s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
   padding: 24px 0 0;
 }
-
-
 .submit-note {
   font-size: 12px;
   color: var(--ink-muted);
   margin-bottom: 14px;
   line-height: 1.5;
 }
-
 .btn-submit {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
@@ -481,15 +512,12 @@ input::placeholder, textarea::placeholder { color: var(--sand-light); }
   box-shadow: 0 4px 16px rgba(122, 46, 8, 0.30);
   white-space: nowrap;
 }
-
 .btn-submit:hover {
   opacity: 0.92;
   box-shadow: 0 6px 24px rgba(122, 46, 8, 0.40);
   transform: translateY(-1px);
 }
-
 .btn-submit:active { transform: scale(0.97) translateY(0); }
-
 /* ── FOOTER ── */
 footer {
   text-align: center;
@@ -497,8 +525,6 @@ footer {
   border-top: 1px solid var(--border-warm);
   margin-top: 20px;
 }
-
-
 .footer-logo {
   display: flex;
   align-items: center;
@@ -510,16 +536,13 @@ footer {
   font-weight: 500;
   color: var(--ink-mid);
 }
-
 .footer-sub {
   font-size: 11px;
   color: var(--ink-muted);
   font-weight: 300;
 }
-
 /* ── SUCCESS ── */
 #success { display: none; }
-
 #success.show {
   display: flex;
   flex-direction: column;
@@ -531,9 +554,7 @@ footer {
   background: var(--cream);
   animation: fadeIn 0.5s ease;
 }
-
 @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
 .succ-top-bar {
   width: 100%;
   background: linear-gradient(135deg, var(--terra-deep), var(--terra-mid));
@@ -543,9 +564,7 @@ footer {
   justify-content: space-between;
   flex-shrink: 0;
 }
-
 .succ-brand { font-size: 14px; font-weight: 600; letter-spacing: 0.1em; color: #fff; }
-
 .succ-badge {
   display: flex; align-items: center; gap: 8px;
   background: rgba(255,255,255,0.15);
@@ -553,16 +572,13 @@ footer {
   border-radius: 100px;
   padding: 5px 14px;
 }
-
 .succ-dot {
   width: 7px; height: 7px; border-radius: 50%;
   background: #7effa0;
   box-shadow: 0 0 0 3px rgba(126,255,160,0.25);
   flex-shrink: 0;
 }
-
 .succ-badge span { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.85); letter-spacing: 0.04em; }
-
 .succ-body {
   width: 100%; max-width: 720px;
   padding: 44px 24px 60px;
@@ -570,7 +586,6 @@ footer {
   flex-direction: column;
   align-items: center;
 }
-
 .succ-icon {
   width: 46px; height: 46px;
   background: linear-gradient(135deg, var(--terra-mid), var(--terra-warm));
@@ -580,7 +595,6 @@ footer {
   margin-bottom: 18px;
   box-shadow: 0 6px 20px rgba(196,90,26,0.28);
 }
-
 .succ-body h2 {
   font-size: clamp(24px, 4vw, 34px);
   font-weight: 300;
@@ -589,7 +603,6 @@ footer {
   margin-bottom: 10px;
   text-align: center;
 }
-
 .succ-sub {
   font-size: 13px; font-weight: 300;
   color: var(--ink-muted);
@@ -598,20 +611,16 @@ footer {
   text-align: center;
   margin-bottom: 36px;
 }
-
 .succ-divider {
   display: flex; align-items: center; gap: 14px;
   width: 100%; margin-bottom: 24px;
 }
-
 .succ-divider-line { flex: 1; height: 1px; background: var(--border-warm); }
-
 .succ-divider-label {
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--ink-muted); white-space: nowrap;
 }
-
 .succ-cal-wrap {
   width: 100%;
   background: #fff;
@@ -621,29 +630,37 @@ footer {
   box-shadow: 0 4px 32px rgba(120,50,10,0.08), 0 1px 4px rgba(120,50,10,0.04);
   min-height: 700px;
 }
-
 @media (max-width: 560px) {
   nav { padding: 18px 20px; }
   main { padding: 0 16px 80px; }
   .fields-grid { grid-template-columns: 1fr; }
   .field.full { grid-column: 1; }
   .submit-area { flex-direction: column; align-items: stretch; }
-  
-.submit-note {
-  font-size: 12px;
-  color: var(--ink-muted);
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
-
-.btn-submit { text-align: center; }
+  .submit-note {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .btn-submit { text-align: center; }
   .card-intro { flex-direction: column; }
+  /* Enhanced mobile touch targets */
+  .opt {
+    padding: 14px 16px;
+    gap: 14px;
+    border-radius: 9px;
+  }
+  .opt-label strong { font-size: 14px; }
+  .opt-label span { font-size: 12.5px; }
+  .q-block { padding: 24px 20px 20px; border-radius: 12px; }
+  .q-title { font-size: 15px; }
+  .radio-ring { width: 18px; height: 18px; }
+  .radio-dot { width: 7px; height: 7px; }
+  .opts { gap: 8px; }
 }
 </style>
-
 </head>
 <body>
-
 <!-- HERO HEADER -->
 <div class="hero-header">
   <nav>
@@ -652,21 +669,18 @@ footer {
     </div>
     <span class="nav-tag">Pre-Call Audit</span>
   </nav>
-
   <div class="hero-body">
-    <p class="hero-eyebrow">5 questions · 2 minutes</p>
+    <p class="hero-eyebrow">5 questions · 3 minutes</p>
     <h1>Before our call,<br><em>tell us what you're dealing with.</em></h1>
     <p>This brief audit lets us calibrate the demo to your actual case parameters - no generic walkthrough, just the signals that matter.</p>
   </div>
 </div>
-
 <!-- FORM MAIN -->
 <main>
 </div>
       <span class="progress-text" id="pCount">0 / 5</span>
     </div>
   </div>
-
   <!-- Card intro -->
   <div class="card-intro">
     <div class="card-intro-text">
@@ -676,15 +690,47 @@ footer {
       <div class="progress-track">
         <div class="progress-fill" id="pFill"></div>
       </div>
-      <span class="progress-text" id="pCount">0 / 4</span>
+      <span class="progress-text" id="pCount">0 / 5</span>
     </div>
   </div>
-
   <form id="form" novalidate>
-
-    <!-- Q1 -->
+    <!-- Q1 - Organisation type -->
+    <div class="q-block" id="b-orgtype">
+      <div class="q-meta"><span class="q-num">01</span><span class="q-cat">Your profile</span></div>
+      <p class="q-title">What best describes your organisation?</p>
+      <p class="q-hint">Helps us tailor the demo and pricing to your context.</p>
+      <div class="opts">
+        <label class="opt" data-g="orgtype" data-v="independent">
+          <input type="radio" name="orgtype" value="independent">
+          <div class="radio-ring"><div class="radio-dot"></div></div>
+          <div class="opt-label"><strong>Independent Expert</strong><span>Solo practitioner or boutique advisory</span></div>
+        </label>
+        <label class="opt" data-g="orgtype" data-v="consulting">
+          <input type="radio" name="orgtype" value="consulting">
+          <div class="radio-ring"><div class="radio-dot"></div></div>
+          <div class="opt-label"><strong>Consulting / Claims Firm</strong><span>Multi-consultant delay & quantum practice</span></div>
+        </label>
+        <label class="opt" data-g="orgtype" data-v="lawfirm">
+          <input type="radio" name="orgtype" value="lawfirm">
+          <div class="radio-ring"><div class="radio-dot"></div></div>
+          <div class="opt-label"><strong>Law Firm</strong><span>Construction litigation or arbitration team</span></div>
+        </label>
+        <label class="opt" data-g="orgtype" data-v="contractor">
+          <input type="radio" name="orgtype" value="contractor">
+          <div class="radio-ring"><div class="radio-dot"></div></div>
+          <div class="opt-label"><strong>Contractor / Employer</strong><span>In-house claims or project controls department</span></div>
+        </label>
+        <label class="opt" data-g="orgtype" data-v="insurer">
+          <input type="radio" name="orgtype" value="insurer">
+          <div class="radio-ring"><div class="radio-dot"></div></div>
+          <div class="opt-label"><strong>Insurer / Funder</strong><span>Evaluating claims exposure or litigation funding</span></div>
+        </label>
+      </div>
+      <p class="q-err-msg">Please select an option to continue.</p>
+    </div>
+    <!-- Q2 - Email volume -->
     <div class="q-block" id="b-emails">
-      <div class="q-meta"><span class="q-num">01</span><span class="q-cat">Document volume</span></div>
+      <div class="q-meta"><span class="q-num">02</span><span class="q-cat">Document volume</span></div>
       <p class="q-title">How many emails are involved in a typical case?</p>
       <p class="q-hint">Combined across all mailboxes - PST, EML, or MSG archives. An order of magnitude is sufficient.</p>
       <div class="opts">
@@ -711,45 +757,38 @@ footer {
       </div>
       <p class="q-err-msg">Please select an option to continue.</p>
     </div>
-
-    <!-- Q2 -->
-    <div class="q-block" id="b-activities">
-      <div class="q-meta"><span class="q-num">02</span><span class="q-cat">Schedule</span></div>
-      <p class="q-title">What scheduling format does your team work with?</p>
-      <p class="q-hint">Select the closest match to your typical case setup.</p>
+    <!-- Q3 - Dispute value -->
+    <div class="q-block" id="b-disputevalue">
+      <div class="q-meta"><span class="q-num">03</span><span class="q-cat">Case scale</span></div>
+      <p class="q-title">What is the typical value of disputes you handle?</p>
+      <p class="q-hint">Claimed amount or exposure at stake — an order of magnitude is sufficient.</p>
       <div class="opts">
-        <label class="opt" data-g="activities" data-v="p6-500-3k">
-          <input type="radio" name="activities" value="p6-500-3k">
+        <label class="opt" data-g="disputevalue" data-v="lt10m">
+          <input type="radio" name="disputevalue" value="lt10m">
           <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>Primavera P6 - up to 3,000 activities</strong><span>Standard structured project schedule</span></div>
+          <div class="opt-label"><strong>&lt; $10 million</strong><span>Single-trade or subcontractor dispute</span></div>
         </label>
-        <label class="opt" data-g="activities" data-v="p6-3k-12k">
-          <input type="radio" name="activities" value="p6-3k-12k">
+        <label class="opt" data-g="disputevalue" data-v="10m-50m">
+          <input type="radio" name="disputevalue" value="10m-50m">
           <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>Primavera P6 - 3,000 to 12,000 activities</strong><span>Large project with detailed WBS and dependencies</span></div>
+          <div class="opt-label"><strong>$10M – $50M</strong><span>Mid-range construction or infrastructure claim</span></div>
         </label>
-        <label class="opt" data-g="activities" data-v="p6-gt12k">
-          <input type="radio" name="activities" value="p6-gt12k">
+        <label class="opt" data-g="disputevalue" data-v="50m-200m">
+          <input type="radio" name="disputevalue" value="50m-200m">
           <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>Primavera P6 - over 12,000 activities</strong><span>Mega-project or multi-contract programme</span></div>
+          <div class="opt-label"><strong>$50M – $200M</strong><span>Major project or programme-level dispute</span></div>
         </label>
-        <label class="opt" data-g="activities" data-v="msp">
-          <input type="radio" name="activities" value="msp">
+        <label class="opt" data-g="disputevalue" data-v="gt200m">
+          <input type="radio" name="disputevalue" value="gt200m">
           <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>Microsoft Project (.mpp / .xml)</strong><span>Any scale</span></div>
-        </label>
-        <label class="opt" data-g="activities" data-v="other">
-          <input type="radio" name="activities" value="other">
-          <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>No structured schedule / Excel-based</strong><span>Custom tooling or no formal CPM baseline</span></div>
+          <div class="opt-label"><strong>&gt; $200 million</strong><span>Mega-project or multi-contract arbitration</span></div>
         </label>
       </div>
       <p class="q-err-msg">Please select an option to continue.</p>
     </div>
-
-    <!-- Q3 -->
+    <!-- Q4 - Cases per year -->
     <div class="q-block" id="b-volume">
-      <div class="q-meta"><span class="q-num">03</span><span class="q-cat">Organisation & pipeline</span></div>
+      <div class="q-meta"><span class="q-num">04</span><span class="q-cat">Organisation & pipeline</span></div>
       <p class="q-title">How many forensic delay cases does your organisation handle per year?</p>
       <p class="q-hint">Across all teams and offices - all dispute types included.</p>
       <div class="opts">
@@ -776,18 +815,16 @@ footer {
       </div>
       <p class="q-err-msg">Please select an option to continue.</p>
     </div>
-
-
-    <!-- Q4 -->
+    <!-- Q5 - Urgency -->
     <div class="q-block" id="b-deadline">
-      <div class="q-meta"><span class="q-num">04</span><span class="q-cat">Setup & timeline</span></div>
+      <div class="q-meta"><span class="q-num">05</span><span class="q-cat">Setup & timeline</span></div>
       <p class="q-title">When would you need Kalypso operational?</p>
       <p class="q-hint">Helps us calibrate the demo and deployment timeline.</p>
       <div class="opts">
         <label class="opt" data-g="deadline" data-v="active">
           <input type="radio" name="deadline" value="active">
           <div class="radio-ring"><div class="radio-dot"></div></div>
-          <div class="opt-label"><strong>Within 1 weeks</strong><span>Active case in progress - immediate deployment</span></div>
+          <div class="opt-label"><strong>Within 1 week</strong><span>Active case in progress - immediate deployment</span></div>
         </label>
         <label class="opt" data-g="deadline" data-v="imminent">
           <input type="radio" name="deadline" value="imminent">
@@ -800,13 +837,10 @@ footer {
           <div class="opt-label"><strong>No immediate deadline</strong><span>Evaluating options for future mandates</span></div>
         </label>
       </div>
-
       <p class="q-hint" style="margin-top:24px;margin-bottom:8px;font-weight:600;color:var(--ink);">How does your team currently cross-reference emails with the schedule?</p>
       <textarea name="current_method" rows="3" style="width:100%;padding:12px 16px;border:1px solid var(--border-card);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);background:var(--white);resize:vertical;outline:none;" placeholder="e.g. Manual Excel log, reading emails one by one, internal tool, outsourced to junior analysts..."></textarea>
-
       <p class="q-err-msg">Please select an option to continue.</p>
     </div>
-
     <!-- CONTACT -->
     <div class="contact-section">
       <p class="section-title">Contact</p>
@@ -827,14 +861,16 @@ footer {
           <span class="field-label">Your role <small>- optional</small></span>
           <input type="text" name="role" placeholder="e.g. Partner, Senior Delay Analyst, Head of Claims, IT Director..." autocomplete="organization-title">
         </div>
+        <div class="field full">
+          <span class="field-label">How did you hear about Kalypso? <small>- optional</small></span>
+          <input type="text" name="referral" placeholder="e.g. LinkedIn, colleague, conference, Google search...">
+        </div>
       </div>
     </div>
-
     <div class="submit-area">
       <p class="submit-note">Treated as strictly confidential. Used solely to prepare your Kalypso call - not shared with third parties.</p>
       <button type="submit" class="btn-submit">Submit Audit →</button>
     </div>
-
   </form>
     <footer>
     <div class="footer-logo">
@@ -843,7 +879,6 @@ footer {
     <p class="footer-sub">Forensic Delay Intelligence · © 2026</p>
   </footer>
 </main>
-
 <!-- SUCCESS -->
 <div id="success">
   <div class="succ-top-bar">
@@ -867,30 +902,79 @@ footer {
     </div>
   </div>
 </div>
-
 <script>
-const groups = ['emails','activities','volume','deadline'];
-const blockIds = {emails:'b-emails',activities:'b-activities',volume:'b-volume',deadline:'b-deadline'};
+const groups = ['orgtype','emails','disputevalue','volume','deadline'];
+const blockIds = {orgtype:'b-orgtype',emails:'b-emails',disputevalue:'b-disputevalue',volume:'b-volume',deadline:'b-deadline'};
 const answered = new Set();
 
+// ── Progressive reveal setup ──
+const contactSection = document.querySelector('.contact-section');
+const submitArea = document.querySelector('.submit-area');
+const allBlocks = groups.map(g => document.getElementById(blockIds[g]));
+
+// Hide all blocks except first, hide contact & submit
+allBlocks.forEach((block, i) => {
+  if (i === 0) {
+    block.classList.add('q-first-reveal');
+  } else {
+    block.classList.add('q-hidden');
+  }
+});
+contactSection.classList.add('q-hidden');
+submitArea.classList.add('q-hidden');
+
+function revealNext(currentGroupIndex) {
+  const nextIndex = currentGroupIndex + 1;
+  // Mark current block as done
+  allBlocks[currentGroupIndex].classList.add('q-done');
+
+  if (nextIndex < allBlocks.length) {
+    // Reveal next question block
+    const nextBlock = allBlocks[nextIndex];
+    nextBlock.classList.remove('q-hidden');
+    nextBlock.classList.add('q-visible');
+    // Smooth scroll to next with slight delay for animation
+    setTimeout(() => {
+      nextBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+  } else {
+    // All questions answered — reveal contact + submit
+    contactSection.classList.remove('q-hidden');
+    contactSection.classList.add('q-visible');
+    submitArea.classList.remove('q-hidden');
+    submitArea.classList.add('q-visible');
+    setTimeout(() => {
+      contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+  }
+}
+
+// ── Option click handler ──
 document.querySelectorAll('.opt').forEach(opt => {
   opt.addEventListener('click', () => {
     const g = opt.dataset.g;
+    const wasAlreadyAnswered = answered.has(g);
     document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(o => o.classList.remove('on'));
     opt.classList.add('on');
     opt.querySelector('input').checked = true;
     answered.add(g);
     document.getElementById(blockIds[g]).classList.remove('err');
     const n = answered.size;
-    document.getElementById('pFill').style.width = (n / 4 * 100) + '%';
-    document.getElementById('pCount').textContent = n + ' / 4';
+    document.getElementById('pFill').style.width = (n / 5 * 100) + '%';
+    document.getElementById('pCount').textContent = n + ' / 5';
+
+    // Progressive reveal: only trigger on first answer for this group
+    if (!wasAlreadyAnswered) {
+      const currentIndex = groups.indexOf(g);
+      setTimeout(() => revealNext(currentIndex), 400);
+    }
   });
 });
 
+// ── Form submit handler ──
 document.getElementById('form').addEventListener('submit', e => {
   e.preventDefault();
   let ok = true, firstErr = null;
-
   groups.forEach(g => {
     if (!document.querySelector(`input[name="${g}"]:checked`)) {
       ok = false;
@@ -899,28 +983,22 @@ document.getElementById('form').addEventListener('submit', e => {
       if (!firstErr) firstErr = b;
     }
   });
-
   const nm = document.querySelector('input[name="name"]');
   const em = document.querySelector('input[name="email"]');
-
   if (!nm.value.trim()) { ok = false; document.getElementById('f-name').classList.add('err-f'); }
   else document.getElementById('f-name').classList.remove('err-f');
-
   if (!em.value || !em.value.includes('@')) { ok = false; document.getElementById('f-email').classList.add('err-f'); }
   else document.getElementById('f-email').classList.remove('err-f');
-
   if (!ok && firstErr) { firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
-
   if (ok) {
     const name    = document.querySelector('input[name="name"]').value.trim();
     const email   = document.querySelector('input[name="email"]').value.trim();
     const company = document.querySelector('input[name="company"]').value.trim();
     const role    = document.querySelector('input[name="role"]').value.trim();
     const current_method = document.querySelector('textarea[name="current_method"]').value.trim();
-
+    const referral = document.querySelector('input[name="referral"]').value.trim();
     // Get radio answers
     const getValue = (g) => { const el = document.querySelector(`input[name="${g}"]:checked`); return el ? el.value : ''; };
-
     // POST to Web3Forms
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -929,19 +1007,18 @@ document.getElementById('form').addEventListener('submit', e => {
         access_key: '6cfed2af-66be-4360-a23f-e9855ff5869d',
         subject: 'Kalypso audit — ' + name + ' (' + (company || email) + ')',
         from_name: 'Kalypso Audit Form',
-        name, email, company, role, current_method,
+        name, email, company, role, current_method, referral,
+        orgtype: getValue('orgtype'),
         emails: getValue('emails'),
-        activities: getValue('activities'),
+        disputevalue: getValue('disputevalue'),
         volume: getValue('volume'),
         deadline: getValue('deadline')
       })
     }).catch(function(){});
-
     // Show success screen immediately (don't wait for email)
     document.getElementById('success').classList.add('show');
     document.querySelector('main').style.display = 'none';
     document.querySelector('.hero-header').style.display = 'none';
-
     // Cal.com inline embed
     (function(C,A,L){
       var p=function(a,ar){a.q.push(ar);};
@@ -953,7 +1030,6 @@ document.getElementById('form').addEventListener('submit', e => {
         typeof ns==='string'?(cal.ns[ns]=api)&&p(api,ar):p(cal,ar);return;}p(cal,ar);
       };
     })(window,'https://app.cal.com/embed/embed.js','init');
-
     Cal('init', { origin: 'https://cal.com' });
     Cal('inline', {
       elementOrSelector: '#cal-embed',
@@ -967,7 +1043,6 @@ document.getElementById('form').addEventListener('submit', e => {
     });
   }
 });
-
 document.querySelectorAll('input[type="text"],input[type="email"]').forEach(inp => {
   inp.addEventListener('input', function() { this.closest('.field').classList.remove('err-f'); });
 });
